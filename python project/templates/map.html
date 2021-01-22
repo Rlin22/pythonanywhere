@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>天气查询</title>
+      <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css"/>
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/AMap.PlaceSearchRender1120.css"/>
+    <style>
+        #panel {
+            z-index: 999;
+            position: absolute;
+            background-color: white;
+            max-height: 100%;
+            overflow-y: auto;
+            right: 0;
+            width: 280px;
+        }
+    </style>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=6f8080901bb99109c5b56f60a4cd2bed&plugin=AMap.PlaceSearch"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/PlaceSearchRender.js"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <style>
+        html,body,#container{
+            height:100%;
+            width:100%;
+        }
+        .btn{
+            width:10rem;
+            margin-left:6.8rem;   
+        }
+    </style>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=6f8080901bb99109c5b56f60a4cd2bed&plugin=AMap.Geocoder"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/PlaceSearchRender.js"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+
+
+
+
+
+
+<body>
+<div id="container"></div>
+
+
+<div class="input-card" style='width:28rem;height: 10rem;background-color: #FFD2D2;box-shadow: 10px 10px 5px #000000'>  //请输入需要查询的城市
+   <input type="text" id="city_name">
+   <div>  ↓  ↓</div>
+   <input type="button" name="gan" onclick="f()" value="查询">
+</div> 
+
+
+
+<script type="text/javascript">
+var map = new AMap.Map("container", {  //new新的对象，加载新地图到名为container的div中，也就是上几行注释所言
+        resizeEnable: true
+    });
+AMap.plugin('AMap.CitySearch', function () {  //自动索取ip地图定位，即你的网络ip是哪，地图中心就会初始化到哪
+  var citySearch = new AMap.CitySearch()
+  citySearch.getLocalCity(function (status, result) {
+    if (status === 'complete' && result.info === 'OK') {
+    }
+  })
+})
+
+
+
+
+    function f(){         //点击事件
+           AMap.service('AMap.PlaceSearch',function(){    //没有constructor，一个是引入key 一个是要有这个的声明
+            var placeSearch = new AMap.PlaceSearch();   //用PlaceSearch获取所查询城市的信息，我们主要要从中获取经纬度，用于下面把视窗的中心定位到所查询城市
+    
+     placeSearch.search(document.getElementById('city_name').value, function (status, result) {   //函数获取带有坐标的对象
+       // 查询成功时，result即对应匹配的信息
+       console.log(result)
+       var pois = result.poiList.pois;  //位置是以数组的形式传回来的，下面取pois[0]就是所查询城市的经纬度
+
+
+
+
+
+        AMap.plugin('AMap.Weather', function() {
+    //创建天气查询实例
+    var weather = new AMap.Weather();
+    //这个对象可以查询指定城市的天气信息（前面那个PlaceSearch对象是可以查询到经纬度）
+    weather.getLive(document.getElementById('city_name').value, function(err, data) {  //获取所查询城市
+        //console.log(err, data); 可在console面板查看API传回对象中的信息
+        AMap.plugin('AMap.Weather', function() {
+        var weather = new AMap.Weather();
+        //查询实时天气信息, 查询的城市到行政级别的城市，如朝阳区、杭州市
+        weather.getLive(document.getElementById('city_name').value, function(err, data) {
+            if (!err) {
+                var str = [];   //天气信息就保存在data对象中，要啥取啥
+                str.push('<h4 >实时天气' + '</h4><hr>');
+                str.push('<p>城市/区：' + data.city + '</p>');
+                str.push('<p>天气：' + data.weather + '</p>');
+                str.push('<p>温度：' + data.temperature + '℃</p>');
+                str.push('<p>风向：' + data.windDirection + '</p>');
+                str.push('<p>风力：' + data.windPower + ' 级</p>');
+                str.push('<p>空气湿度：' + data.humidity + '</p>');
+                str.push('<p>发布时间：' + data.reportTime + '</p>');
+                var marker = new AMap.Marker({map: map, position: pois[0].location}); //这个是标记地点的蓝色的那个符号
+                var infoWin = new AMap.InfoWindow({  //这个对象可以对视窗进行移动操作——根据所提供经纬度可以把视窗的中心移动到指定城市
+                    content: '<div class="info" style="position:inherit;margin-bottom:0;">'+str.join('')+'</div><div class="sharp"></div>',
+                    isCustom:true,
+                    offset: new AMap.Pixel(0, -37)
+                });
+                map.setCenter(marker.getPosition());     //设置地图中心
+                infoWin.open(map, marker.getPosition());   
+                marker.on('mouseover', function() {      
+                    infoWin.open(map, marker.getPosition());     //把视窗交点移动到所查询城市
+                });
+            }
+        });
+         });
+    });
+});
+
+})
+    
+    
+    
+
+});
+
+}
+    
+    
+</script>
+</body>
+</html>

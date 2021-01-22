@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>天气查询</title>
+        <style type="text/css">
+            * {
+                margin: 0px;
+            }
+           
+            #box {
+                margin: 50px auto;
+                width: 30%;
+                height: 360px;
+                background-color: grey;
+                text-align: center;
+                border-radius: 15px;
+                border: 2px black solid;
+            }
+
+            .title {
+                line-height: 58px;
+                margin-top: 20px;
+                font-size: 36px;
+                color: yellow;
+                height: 58px;
+            }
+
+            #box:hover {
+                border: 2px #fff solid;
+            }
+
+            .input {
+                margin-top: 20px;
+            }
+
+            input {
+                margin-top: 5px;
+                outline-style: none;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                padding: 13px 14px;
+                width: 70%;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: "Microsoft soft";
+            }
+
+            button {
+                margin-top: 20px;
+                border: none;
+                color: #000;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 15px;
+                background-color: #CCCCCC;
+            }
+            button:hover{
+                background-color:black;
+                color: #fff;
+            }
+        </style>
+    </head>
+    <body style="background: url(https://media.st.dl.pinyuncloud.com/steam/apps/1091500/ss_526123764d1c628caa1eb62c596f1b732f416c8c.600x338.jpg?t=1608552868) ; background-size:100% 100% ; background-attachment: fixed">
+        <div id="content">
+            <form class="form-signin" method="post" action="/search">
+            <div id="box">
+                <div class="title">Login</div>
+                <div class="input">
+                    <input type="text" id="username" name="zhanghao"  value="" placeholder="用户名" />
+                    <br>
+                    <input type="password" id="password" name="mima"  placeholder="密码" />
+                    <br>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">登录查询</button>
+                </div>
+            </div>
+            </form>
+        </div>
+
+    </body>
+
+</html>
